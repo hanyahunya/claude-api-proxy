@@ -23,7 +23,7 @@ Anthropic 엔드포인트를 제공한다. 내부적으로는 `claude -p`(Claude
 **pipx (권장 — 한 줄 설치):**
 ```bash
 pipx install git+https://github.com/hanyahunya/claude-api-proxy
-claude-api-proxy            # 기본 127.0.0.1:8787 (PORT 환경변수로 변경)
+claude-api-proxy            # 기본 127.0.0.1:8799 (PORT 로 변경; 막히면 자동으로 빈 포트 탐색)
 ```
 
 **소스에서 직접:**

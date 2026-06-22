@@ -435,12 +435,41 @@ async def complete(req: Request,
     }
 
 
+def _find_free_port(host: str, desired: int, *, span: int = 50) -> int:
+    """desired 포트가 비어있으면 그대로, 막혀있으면 위로 올라가며 빈 포트를 찾는다."""
+    import socket
+    for port in range(desired, desired + span):
+        with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+            s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+            try:
+                s.bind((host, port))
+                return port
+            except OSError:
+                continue
+    raise RuntimeError(f"{desired}~{desired + span} 사이에 빈 포트가 없습니다.")
+
+
 def main() -> None:
     """콘솔 엔트리포인트 (`claude-api-proxy`)."""
     import uvicorn
     host = os.environ.get("HOST", "127.0.0.1")
-    port = int(os.environ.get("PORT", "8787"))
-    log.info("claude-api-proxy listening on http://%s:%s (cli cwd=%s)", host, port, WORKDIR)
+    # 기본 8799 (8787 은 headroom 등 다른 OpenAI/Anthropic 프록시가 흔히 쓰므로 피함).
+    desired = int(os.environ.get("PORT", "8799"))
+    port = _find_free_port(host, desired)
+    if port != desired:
+        log.warning("포트 %s 가 사용 중 → %s 로 대체합니다.", desired, port)
+    base_url = f"http://{host}:{port}"
+    banner = (
+        "\n" + "=" * 60 + "\n"
+        f"  claude-api-proxy 가동:  {base_url}\n"
+        "  클라이언트(기존 서버)에서 코드 수정 없이 아래만 설정하세요:\n"
+        f"    set  ANTHROPIC_BASE_URL={base_url}        (Windows CMD)\n"
+        f"    $env:ANTHROPIC_BASE_URL='{base_url}'      (PowerShell)\n"
+        f"    export ANTHROPIC_BASE_URL={base_url}      (bash)\n"
+        "    ANTHROPIC_API_KEY 는 아무 값이나 무방 (프록시가 구독 인증 사용)\n"
+        + "=" * 60 + "\n"
+    )
+    print(banner, flush=True)
     uvicorn.run(app, host=host, port=port)
 
 
