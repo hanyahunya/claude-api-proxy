@@ -16,20 +16,25 @@ Anthropic 엔드포인트를 제공한다. 내부적으로는 `claude -p`(Claude
 
 > 기존 프로젝트 코드는 일절 변경하지 않는다. 이 폴더만으로 독립 실행된다.
 
-## 실행
-
-```bat
-run.bat
-```
-또는 수동:
-```bash
-python -m venv .venv
-.venv\Scripts\activate
-pip install -r requirements.txt
-python server.py      # 기본 127.0.0.1:8787 (PORT 환경변수로 변경)
-```
+## 설치 & 실행
 
 전제: `claude` CLI 설치 + `claude login`(구독) 또는 `ANTHROPIC_API_KEY` 인증 완료.
+
+**pipx (권장 — 한 줄 설치):**
+```bash
+pipx install git+https://github.com/hanyahunya/claude-api-proxy
+claude-api-proxy            # 기본 127.0.0.1:8787 (PORT 환경변수로 변경)
+```
+
+**소스에서 직접:**
+```bash
+git clone https://github.com/hanyahunya/claude-api-proxy
+cd claude-api-proxy
+pip install -r requirements.txt
+python server.py
+```
+
+**Windows 원클릭:** `run.bat` (venv 자동 생성·설치 후 실행)
 
 ## 클라이언트 예시 (공식 SDK — 그대로 동작 검증됨)
 
