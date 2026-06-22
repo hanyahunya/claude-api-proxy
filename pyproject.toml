@@ -1,0 +1,32 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "claude-api-proxy"
+version = "0.1.0"
+description = "Anthropic API-compatible proxy backed by the Claude Code CLI — use your Claude Pro/Max subscription as if it were the Claude API."
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "MIT" }
+authors = [{ name = "hanyahunya" }]
+keywords = ["claude", "anthropic", "api", "proxy", "claude-code", "subscription", "llm"]
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+]
+dependencies = [
+    "fastapi>=0.110",
+    "uvicorn[standard]>=0.27",
+]
+
+[project.urls]
+Homepage = "https://github.com/hanyahunya/claude-api-proxy"
+Repository = "https://github.com/hanyahunya/claude-api-proxy"
+
+[project.scripts]
+claude-api-proxy = "server:main"
+
+[tool.setuptools]
+py-modules = ["server"]
